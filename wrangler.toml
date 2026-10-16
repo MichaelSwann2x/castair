@@ -1,0 +1,12 @@
+name = "castair"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Pages project. Bind this repo in the Cloudflare dashboard
+# or run: npm run deploy
+#
+# For full edge runtime + D1/R2 later, add:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "castair"
+# database_id = "<your-d1-id>"

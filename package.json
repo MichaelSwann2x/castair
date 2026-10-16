@@ -1,14 +1,17 @@
 {
   "name": "castair",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Castair — Aircraft Quality Control & Return-to-Service Inspector Platform",
+  "description": "Castair — Aircraft Quality Control & Return-to-Service Inspector Platform. Offline-first, encrypted, agentic.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
+    "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=castair"
   },
   "dependencies": {
     "next": "^15.0.0",
@@ -23,10 +26,14 @@
     "postcss": "^8.4.0",
     "autoprefixer": "^10.4.0",
     "zod": "^3.23.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "framer-motion": "^11.11.0",
+    "lucide-react": "^0.454.0"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
-    "eslint-config-next": "^15.0.0"
+    "eslint-config-next": "^15.0.0",
+    "@cloudflare/next-on-pages": "^1.13.0",
+    "wrangler": "^3.80.0"
   }
 }
