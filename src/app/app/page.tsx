@@ -1,72 +1,79 @@
-/**
- * Main product shell — Attio-style dense CRM for inspection work.
- * Placeholder data until backend + tenant auth are wired.
- */
+"use client";
 
-const sampleAircraft = [
-  { reg: "N123AB", type: "B737-800", status: "In Check", nextDue: "2026-10-22" },
-  { reg: "G-EUUY", type: "A320neo", status: "Line", nextDue: "2026-10-18" },
-  { reg: "VH-XZC", type: "B787-9", status: "RTS Pending", nextDue: "2026-10-17" },
-];
+import { useEffect, useState } from "react";
+import { getSession } from "@/lib/auth/store";
+import { localCmms } from "@/lib/cmms/local-store";
+import type { Aircraft } from "@/lib/cmms/types";
 
-export default function AppHome() {
+const statusLabel: Record<Aircraft["status"], string> = {
+  line: "Line",
+  in_check: "In check",
+  rts_pending: "RTS pending",
+  grounded: "Grounded",
+  stored: "Stored",
+};
+
+export default function AircraftPage() {
+  const [rows, setRows] = useState<Aircraft[]>([]);
+
+  useEffect(() => {
+    const s = getSession();
+    if (!s) return;
+    localCmms.seedDemo(s.tenant.id);
+    setRows(localCmms.listAircraft(s.tenant.id));
+  }, []);
+
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-56 border-r border-[var(--border)] bg-[var(--surface)] p-4 flex flex-col gap-1">
-        <div className="font-semibold mb-6 px-2">Castair</div>
-        {["Aircraft", "Work Packages", "Findings", "Agents", "Approvals", "Audit"].map(
-          (item) => (
-            <button
-              key={item}
-              className="text-left px-2 py-1.5 rounded text-sm hover:bg-white text-[var(--foreground)]"
-            >
-              {item}
-            </button>
-          )
-        )}
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col">
-        <header className="border-b border-[var(--border)] px-6 py-3 flex items-center justify-between">
-          <h1 className="font-medium">Aircraft</h1>
-          <div className="text-sm text-[var(--muted)]">Tenant sandbox active</div>
-        </header>
-
-        <div className="p-6">
+    <>
+      <header className="border-b border-[var(--border)] px-6 py-3 flex items-center justify-between bg-[var(--surface)]">
+        <h1 className="font-medium">Aircraft</h1>
+        <span className="text-xs text-[var(--muted)]">Castair native · offline</span>
+      </header>
+      <div className="p-6 animate-fade-up">
+        <div className="castair-card overflow-hidden">
           <table className="castair-table">
             <thead>
               <tr>
                 <th>Registration</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Next Due</th>
+                <th>Base</th>
+                <th>Next due</th>
               </tr>
             </thead>
             <tbody>
-              {sampleAircraft.map((a) => (
-                <tr key={a.reg}>
-                  <td className="font-medium">{a.reg}</td>
+              {rows.map((a) => (
+                <tr key={a.id}>
+                  <td className="font-medium tabular-nums">{a.registration}</td>
                   <td>{a.type}</td>
                   <td>
                     <span
                       className={
-                        a.status === "RTS Pending"
+                        a.status === "rts_pending"
                           ? "text-[var(--warning)]"
+                          : a.status === "grounded"
+                          ? "text-[var(--danger)]"
                           : "text-[var(--muted)]"
                       }
                     >
-                      {a.status}
+                      {statusLabel[a.status]}
                     </span>
                   </td>
-                  <td className="tabular-nums">{a.nextDue}</td>
+                  <td className="text-[var(--muted)]">{a.base ?? "—"}</td>
+                  <td className="tabular-nums">{a.nextDue ?? "—"}</td>
                 </tr>
               ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-[var(--muted)] text-center py-8">
+                    No aircraft yet. Demo data seeds on first load.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }

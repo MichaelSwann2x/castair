@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Castair — Aircraft Quality Control & RTS Inspector",
+  title: "Castair — Aircraft QC & RTS Inspector",
   description:
-    "Agentic, encrypted, sandboxed platform for aviation quality control, return-to-service and safety inspection.",
+    "Agentic, encrypted, offline-first platform for aviation quality control, return-to-service and safety inspection.",
 };
 
 export default function RootLayout({
@@ -13,10 +13,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased bg-white text-[#111111] font-sans">
-        {children}
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased min-h-screen">{children}</body>
     </html>
   );
 }
